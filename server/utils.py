@@ -25,4 +25,4 @@ def load_metadata(meta_file: Path) -> dict:
 
 def update_metadata(meta_file: Path, metadata: dict, filename: str, file_hash: str):
     metadata[filename] = file_hash
-    meta_file.write_text(json.dumps(metadata))
+    meta_file.write_text(json.dumps(metadata, indent=2))

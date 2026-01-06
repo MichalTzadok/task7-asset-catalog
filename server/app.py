@@ -2,7 +2,13 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
-from utils import compute_hash, get_unique_filename, save_file, load_metadata, update_metadata
+from server.utils import (
+    compute_hash,
+    get_unique_filename,
+    save_file,
+    load_metadata,
+    update_metadata,
+)
 
 app = FastAPI(title="Asset Catalog Server")
 
@@ -16,13 +22,14 @@ app.add_middleware(
 )
 
 UPLOAD_DIR = Path("uploads")
-UPLOAD_DIR.mkdir(exist_ok=True)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True) 
 META_FILE = UPLOAD_DIR / "metadata.json"
 metadata = load_metadata(META_FILE)
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     temp_path = UPLOAD_DIR / f"tmp_{file.filename}"
+    temp_path.parent.mkdir(parents=True, exist_ok=True)
     with open(temp_path, "wb") as f:
         f.write(await file.read())
 
